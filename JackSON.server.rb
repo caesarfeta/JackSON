@@ -114,7 +114,7 @@ helpers do
   end
   
 
-  # This is the (theoretically) stable url for the data item
+  # This is the stable url for the data item
   # as recorded to the triple store
   
   def data_src_url( request ) 
@@ -142,6 +142,7 @@ helpers do
   
   # Run a command
   # ls is the only available command
+  #
   # data/path/to/dir?cmd=ls
   
   def run( cmd, pth )

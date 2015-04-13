@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'git'
 require 'rake/testtask'
 require 'yaml'
 require 'find'
@@ -54,6 +55,19 @@ end
 
 desc "Start the server at port #{@settings["port"]}"
 task :start do
+  
+  # Initialize git repo
+  
+  if File.directory?("#{@settings["path"]}/.git") == false
+    STDOUT.puts 'Initializing data GIT repo...'
+  end
+  
+  g = Git.init("#{@settings["path"]}")
+  
+  STDOUT.puts 'Adding files to GIT repo...'
+  g.add( :all=>true )
+  g.commit_all("Server startup - #{ Time.now.getutc }")
+  
   `ruby JackSON.server.rb`
 end
 
@@ -209,21 +223,12 @@ end
 
 namespace :install do
   
-  desc 'Install server'
-  task :server do
-    puts `git submodule update --init`
-    exec "bundle install"
-  end
-  
   desc 'Install UI toolkit'
   task :ui do
     puts `npm install -g bower grunt-cli`
     exec "gem install foundation compass --no-rdoc --no-ri"
   end
   
-end
-task :install do
-  Rake::Task["install:server"].invoke()
 end
 
 
