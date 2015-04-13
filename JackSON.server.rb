@@ -147,7 +147,10 @@ helpers do
   # data/path/to/dir?cmd=ls
   
   def run( cmd, pth )
-    valid = ['ls']
+    
+    # check for command validity
+    
+    valid = ['ls','hist']
     if cmd == nil
       status 404
       return { :error => "No command was passed to ?cmd=" }.to_json
@@ -156,7 +159,11 @@ helpers do
       status 404
       return { :error => "#{cmd} is not a valid command" }.to_json
     end
+    
     case cmd
+    
+    # list files in directory
+    
     when 'ls'
       files = []
       dirs = []
@@ -169,7 +176,18 @@ helpers do
         files.push( "#{data_url(pth)}/#{file}" )
       }
       return { :dirs => dirs, :files => files  }.to_json
+    
+    # show file commit history SHAs
+    
+    when 'hist'
+      git = _git
+      out = []
+      git.log.path( "#{pth}.json" ).each do |commit|
+        out.push( commit.sha )
+      end
+      return { :sha => out }.to_json
     end
+    
   end
   
   
