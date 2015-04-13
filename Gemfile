@@ -9,4 +9,5 @@ gem 'markdown'
 gem 'rest-client' 
 gem 'erubis' 
 gem 'minitest'
+gem 'rugged', "~> 0.21.4"
 gem 'JackRDF', :git => 'https://github.com/PerseusDL/JackRDF'

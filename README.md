@@ -43,9 +43,9 @@ Fresh Install of Ubuntu 12.04
 	rbenv rehash
 	bundle install
 
-### Install JackRDF
-* [JackRDF README.md](https://github.com/PerseusDL/JackRDF/blob/master/README.md)
+### Install Fuseki using JackRDF
 
+* [JackRDF README.md](https://github.com/PerseusDL/JackRDF/blob/master/README.md)
 
 ### Start JackSON
 

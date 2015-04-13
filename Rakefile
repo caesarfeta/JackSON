@@ -212,10 +212,7 @@ namespace :install do
   desc 'Install server'
   task :server do
     puts `git submodule update --init`
-    exec "gem install \
-      sinatra sinatra-contrib sinatra-reloader \
-      markup github-markup rest-client \
-      minitest --no-rdoc --no-ri"
+    exec "bundle install"
   end
   
   desc 'Install UI toolkit'
