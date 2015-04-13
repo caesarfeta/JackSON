@@ -7,6 +7,7 @@ require 'github/markup'
 require 'fileutils'
 require 'open-uri'
 require 'rest_client'
+require 'git'
 
 # Custom JackSON helpers
 
@@ -204,9 +205,20 @@ helpers do
       return { :error => e }.to_json
     end
     
+    # GIT commit
+    
+    git = _git
+    git.add( file.sub('data/','') )
+    git.commit( "POST #{ file } #{ Time.now.getutc }" )
+    
+    
     # send success message
     
     { :success => " #{data_url(pth)} created" }.to_json
+  end
+  
+  def _git
+    Git.init( settings.path )
   end
   
   
@@ -232,8 +244,13 @@ helpers do
     
     # delete the file from the filesystem
     
-    File.delete( file )
+    git = _git
+    git.remove( file.sub('data/','') )
     rm_empty_dirs( File.dirname( file ) )
+    
+    # GIT delete
+    
+    git.commit( "DELETE #{ file } #{ Time.now.getutc }" )
     
     { :success => "#{data_url(pth)} deleted" }.to_json
   end
@@ -274,6 +291,12 @@ helpers do
     rescue Exception => e
       return { :error => e }.to_json
     end
+    
+    # GIT commit
+    
+    git = _git
+    git.add( file.sub('data/','') )
+    git.commit( "PUT #{ file } #{ Time.now.getutc }" )
     
     { :success => "#{data_url(pth)} updated" }.to_json
   end

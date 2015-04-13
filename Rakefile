@@ -61,12 +61,16 @@ task :start do
   if File.directory?("#{@settings["path"]}/.git") == false
     STDOUT.puts 'Initializing data GIT repo...'
   end
-  
   g = Git.init("#{@settings["path"]}")
-  
   STDOUT.puts 'Adding files to GIT repo...'
   g.add( :all=>true )
-  g.commit_all("Server startup - #{ Time.now.getutc }")
+  begin
+    g.commit_all("Server startup - #{ Time.now.getutc }")
+  rescue
+    STDOUT.puts 'No files added to GIT repo...'
+  end
+  
+  # Start the server
   
   `ruby JackSON.server.rb`
 end
