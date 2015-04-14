@@ -148,9 +148,16 @@ helpers do
   
   def run( cmd, pth )
     
+    # See if arguments were passed
+    
+    arg = cmd.split(":")
+    if arg.size > 1
+      cmd = arg.shift
+    end    
+    
     # check for command validity
     
-    valid = ['ls','hist']
+    valid = ['ls','hist','sha']
     if cmd == nil
       status 404
       return { :error => "No command was passed to ?cmd=" }.to_json
@@ -183,9 +190,15 @@ helpers do
       git = _git
       out = []
       git.log.path( "#{pth}.json" ).each do |commit|
-        out.push( commit.sha )
+        out.push( { :sha => commit.sha, :msg => commit.message, :time => commit.date } )
       end
-      return { :sha => out }.to_json
+      return out.to_json
+    
+    # retrieve file state at SHA
+    
+    when 'sha'
+      git = _git
+      return git.show(  arg[0], "#{pth}.json" )
     end
     
   end
@@ -227,7 +240,7 @@ helpers do
     
     git = _git
     git.add( file.sub('data/','') )
-    git.commit( "POST #{ file } #{ Time.now.getutc }" )
+    git.commit( "POST #{ file }" )
     
     
     # send success message
@@ -268,7 +281,7 @@ helpers do
     
     # GIT delete
     
-    git.commit( "DELETE #{ file } #{ Time.now.getutc }" )
+    git.commit( "DELETE #{ file }" )
     
     { :success => "#{data_url(pth)} deleted" }.to_json
   end
@@ -314,7 +327,7 @@ helpers do
     
     git = _git
     git.add( file.sub('data/','') )
-    git.commit( "PUT #{ file } #{ Time.now.getutc }" )
+    git.commit( "PUT #{ file }" )
     
     { :success => "#{data_url(pth)} updated" }.to_json
   end
